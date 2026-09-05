@@ -1,3 +1,4 @@
+const authorizeRoles = require("../middleware/roleMiddleware");
 const express = require("express");
 
 const {
@@ -12,11 +13,16 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-router.get("/profile", protect, (req, res) => {
-    res.status(200).json({
-        message: "You are authorized",
-        user: req.user
-    });
-});
+router.get(
+    "/profile",
+    protect,
+    authorizeRoles("attendee"),
+    (req, res) => {
+        res.status(200).json({
+            message: "You are an authorized attendee",
+            user: req.user
+        });
+    }
+);
 
 module.exports = router;
