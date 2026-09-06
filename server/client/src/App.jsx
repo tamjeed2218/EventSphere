@@ -1,3 +1,4 @@
+import Users from "./pages/admin/Users";
 import AdminLayout from "./layouts/AdminLayout";
 import {
     BrowserRouter,
@@ -59,6 +60,11 @@ function App() {
     <Route
         index
         element={<AdminDashboard />}
+    />
+
+    <Route
+        path="users"
+        element={<Users />}
     />
 </Route>
                 {/* Organizer */}
