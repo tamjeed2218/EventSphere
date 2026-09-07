@@ -31,6 +31,60 @@ function Users() {
         }
     };
 
+const handleRoleChange = async (userId, newRole) => {
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.put(
+            `/users/${userId}/role`,
+            {
+                role: newRole
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        fetchUsers();
+
+    } catch (error) {
+        setError(
+            error.response?.data?.message ||
+            "Failed to update user role"
+        );
+    }
+};
+
+const handleDeleteUser = async (userId) => {
+    const confirmed = window.confirm(
+        "Are you sure you want to delete this user?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.delete(`/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        fetchUsers();
+
+    } catch (error) {
+        setError(
+            error.response?.data?.message ||
+            "Failed to delete user"
+        );
+    }
+};
+
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -61,6 +115,7 @@ function Users() {
                             <th>Email</th>
                             <th>Role</th>
                             <th>Created</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
 
@@ -77,16 +132,46 @@ function Users() {
                                     {user.email}
                                 </td>
 
-                                <td>
-                                    {user.role}
-                                </td>
+<td>
+    <select
+        value={user.role}
+        onChange={(e) =>
+            handleRoleChange(
+                user._id,
+                e.target.value
+            )
+        }
+    >
+        <option value="attendee">
+            Attendee
+        </option>
+
+        <option value="exhibitor">
+            Exhibitor
+        </option>
+
+        <option value="organizer">
+            Organizer
+        </option>
+
+        <option value="admin">
+            Admin
+        </option>
+    </select>
+</td>
 
                                 <td>
                                     {new Date(
                                         user.createdAt
                                     ).toLocaleDateString()}
                                 </td>
-
+<td>
+    <button
+        onClick={() => handleDeleteUser(user._id)}
+    >
+        Delete
+    </button>
+</td>
                             </tr>
                         ))}
 
