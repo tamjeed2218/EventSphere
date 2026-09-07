@@ -33,4 +33,4 @@ MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/EventSphere
 
 JWT_SECRET=your_secure_secret_key
 
-_Security Notice: Never commit your .env file or expose your MongoDB connection string and JWT secret publicly. The .env file is intentionally ignored by Git to protect sensitive configuration data._
+_**Security Notice:** Never commit your .env file or expose your MongoDB connection string and JWT secret publicly. The .env file is intentionally ignored by Git to protect sensitive configuration data._
