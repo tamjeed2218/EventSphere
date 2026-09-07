@@ -29,7 +29,7 @@ YOUR_SUPER_SECRET_KEY — A secure secret key used for JWT authentication.
 Example
 PORT=5000
 
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/EventSphere
+MONGO_URI=mongodb+srv://username:password&#64;cluster.mongodb.net/EventSphere
 
 JWT_SECRET=your_secure_secret_key
 
