@@ -348,7 +348,7 @@ const handleDelete = async (expoId) => {
             )}
 
 
-            {/* Expo List */}
+            {/* Expo List Table */}
 
             <div >
 
