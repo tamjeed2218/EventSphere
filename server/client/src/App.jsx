@@ -1,4 +1,5 @@
 import Users from "./pages/admin/Users";
+import Expos from "./pages/admin/Expos";
 import AdminLayout from "./layouts/AdminLayout";
 import {
     BrowserRouter,
@@ -65,6 +66,10 @@ function App() {
     <Route
         path="users"
         element={<Users />}
+    />
+    <Route
+        path="expos"
+        element={<Expos />}
     />
 </Route>
                 {/* Organizer */}
