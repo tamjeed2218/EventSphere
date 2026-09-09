@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const expoRoutes = require("./routes/expoRoutes");
 const exhibitorRoutes = require("./routes/exhibitorRoutes");
+const boothRoutes = require("./routes/boothRoutes");
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/expos", expoRoutes);
 app.use("/api/exhibitors", exhibitorRoutes);
+app.use("/api/booths", boothRoutes);
 
 app.get("/", (req, res) => {
     res.json({

@@ -1,5 +1,6 @@
 import Users from "./pages/admin/Users";
 import Expos from "./pages/admin/Expos";
+import Booths from "./pages/admin/Booths";
 import AdminLayout from "./layouts/AdminLayout";
 import {
     BrowserRouter,
@@ -71,6 +72,10 @@ function App() {
         path="expos"
         element={<Expos />}
     />
+    <Route
+    path="booths"
+    element={<Booths />}
+/>
 </Route>
                 {/* Organizer */}
 

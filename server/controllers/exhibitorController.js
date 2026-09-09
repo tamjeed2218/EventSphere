@@ -1,6 +1,4 @@
 const Exhibitor = require("../models/Exhibitor");
-const User = require("../models/User");
-
 
 // Create Exhibitor Profile
 const createExhibitor = async (req, res) => {
@@ -143,6 +141,16 @@ const updateExhibitor = async (req, res) => {
             });
         }
 
+        // Exhibitors can update only their own profile
+        if (
+            req.user.role === "exhibitor" &&
+            exhibitor.user.toString() !== req.user.userId.toString()
+        ) {
+            return res.status(403).json({
+                message: "You can only update your own exhibitor profile"
+            });
+        }
+
         const {
             companyName,
             companyDescription,
@@ -247,6 +255,12 @@ const approveExhibitor = async (req, res) => {
             });
         }
 
+        if (exhibitor.status === "approved") {
+            return res.status(400).json({
+                message: "Exhibitor is already approved"
+            });
+        }
+
         exhibitor.status = "approved";
 
         await exhibitor.save();
@@ -279,6 +293,12 @@ const rejectExhibitor = async (req, res) => {
         if (!exhibitor) {
             return res.status(404).json({
                 message: "Exhibitor not found"
+            });
+        }
+
+        if (exhibitor.status === "rejected") {
+            return res.status(400).json({
+                message: "Exhibitor is already rejected"
             });
         }
 
