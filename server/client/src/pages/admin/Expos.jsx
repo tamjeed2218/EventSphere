@@ -57,41 +57,7 @@ function Expos() {
         }));
     };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-        setError("");
-        setSuccess("");
-
-        const token = localStorage.getItem("token");
-
-        if (editingExpo) {
-            await api.put(
-                `/expos/${editingExpo._id}`,
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            setSuccess("Expo updated successfully!");
-        } else {
-            await api.post(
-                "/expos",
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            setSuccess("Expo created successfully!");
-        }
-
+    const resetForm = () => {
         setFormData({
             title: "",
             description: "",
@@ -104,73 +70,110 @@ const handleSubmit = async (e) => {
 
         setEditingExpo(null);
         setShowForm(false);
+    };
 
-        fetchExpos();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    } catch (error) {
-        setError(
-            error.response?.data?.message ||
-            "Failed to save expo"
-        );
-    }
-};
+        try {
+            setError("");
+            setSuccess("");
 
-const handleEdit = (expo) => {
-    setEditingExpo(expo);
+            const token = localStorage.getItem("token");
 
-    setFormData({
-        title: expo.title,
-        description: expo.description,
-        location: expo.location,
-        startDate: expo.startDate
-            ? expo.startDate.substring(0, 10)
-            : "",
-        endDate: expo.endDate
-            ? expo.endDate.substring(0, 10)
-            : "",
-        registrationDeadline: expo.registrationDeadline
-            ? expo.registrationDeadline.substring(0, 10)
-            : "",
-        status: expo.status
-    });
+            if (editingExpo) {
+                await api.put(
+                    `/expos/${editingExpo._id}`,
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
 
-    setShowForm(true);
-    setError("");
-    setSuccess("");
-};
+                setSuccess("Expo updated successfully!");
+            } else {
+                await api.post(
+                    "/expos",
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
 
-const handleDelete = async (expoId) => {
-    const confirmed = window.confirm(
-        "Are you sure you want to delete this expo?"
-    );
-
-    if (!confirmed) {
-        return;
-    }
-
-    try {
-        setError("");
-        setSuccess("");
-
-        const token = localStorage.getItem("token");
-
-        await api.delete(`/expos/${expoId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
+                setSuccess("Expo created successfully!");
             }
+
+            resetForm();
+            fetchExpos();
+
+        } catch (error) {
+            setError(
+                error.response?.data?.message ||
+                "Failed to save expo"
+            );
+        }
+    };
+
+    const handleEdit = (expo) => {
+        setEditingExpo(expo);
+
+        setFormData({
+            title: expo.title,
+            description: expo.description,
+            location: expo.location,
+            startDate: expo.startDate
+                ? expo.startDate.substring(0, 10)
+                : "",
+            endDate: expo.endDate
+                ? expo.endDate.substring(0, 10)
+                : "",
+            registrationDeadline: expo.registrationDeadline
+                ? expo.registrationDeadline.substring(0, 10)
+                : "",
+            status: expo.status
         });
 
-        setSuccess("Expo deleted successfully!");
+        setShowForm(true);
+        setError("");
+        setSuccess("");
+    };
 
-        fetchExpos();
-
-    } catch (error) {
-        setError(
-            error.response?.data?.message ||
-            "Failed to delete expo"
+    const handleDelete = async (expoId) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this expo?"
         );
-    }
-};
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setError("");
+            setSuccess("");
+
+            const token = localStorage.getItem("token");
+
+            await api.delete(`/expos/${expoId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            setSuccess("Expo deleted successfully!");
+
+            fetchExpos();
+
+        } catch (error) {
+            setError(
+                error.response?.data?.message ||
+                "Failed to delete expo"
+            );
+        }
+    };
 
     if (loading) {
         return <p>Loading expos...</p>;
@@ -181,53 +184,72 @@ const handleDelete = async (expoId) => {
 
             {/* Page Header */}
 
-            <div>
+            <div className="expo-page-header">
+
                 <div>
                     <h1>Expos</h1>
-                    <p>Manage all EventSphere expos.</p>
+                    <p>
+                        Manage all EventSphere expos.
+                    </p>
                 </div>
 
                 <button
+                    className="expo-create-button"
                     onClick={() => {
-                        setShowForm(!showForm);
-                        setError("");
-                        setSuccess("");
+                        if (showForm) {
+                            resetForm();
+                        } else {
+                            setShowForm(true);
+                            setEditingExpo(null);
+                            setError("");
+                            setSuccess("");
+                        }
                     }}
-                className=""
                 >
-                    {showForm ? "Cancel" : "+ Create Expo"}
+                    {showForm
+                        ? "Cancel"
+                        : "+ Create Expo"}
                 </button>
+
             </div>
 
 
             {/* Messages */}
 
             {error && (
-                <p style={{ color: "red" }}>
+                <div className="expo-error">
                     {error}
-                </p>
+                </div>
             )}
 
             {success && (
-                <p style={{ color: "green" }}>
+                <div className="expo-success">
                     {success}
-                </p>
+                </div>
             )}
 
 
-            {/* Create Expo Form */}
+            {/* Create / Edit Form */}
 
             {showForm && (
-                <div className="">
+                <div className="expo-form-container">
 
                     <h2>
-    {editingExpo ? "Edit Expo" : "Create New Expo"}
-</h2>
+                        {editingExpo
+                            ? "Edit Expo"
+                            : "Create New Expo"}
+                    </h2>
 
-                    <form className="" onSubmit={handleSubmit}>
+                    <form
+                        className="expo-form"
+                        onSubmit={handleSubmit}
+                    >
 
-                        <div >
-                            <label>Title</label>
+                        <div className="expo-form-group">
+
+                            <label>
+                                Title
+                            </label>
 
                             <input
                                 type="text"
@@ -237,25 +259,15 @@ const handleDelete = async (expoId) => {
                                 placeholder="Enter expo title"
                                 required
                             />
+
                         </div>
 
 
-                        <div >
-                            <label>Description</label>
+                        <div className="expo-form-group">
 
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                placeholder="Enter expo description"
-                                rows="4"
-                                required
-                            />
-                        </div>
-
-
-                        <div >
-                            <label>Location</label>
+                            <label>
+                                Location
+                            </label>
 
                             <input
                                 type="text"
@@ -265,11 +277,33 @@ const handleDelete = async (expoId) => {
                                 placeholder="Enter expo location"
                                 required
                             />
+
                         </div>
 
 
-                        <div >
-                            <label>Start Date</label>
+                        <div className="expo-form-group full-width">
+
+                            <label>
+                                Description
+                            </label>
+
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
+                                placeholder="Enter expo description"
+                                rows="4"
+                                required
+                            />
+
+                        </div>
+
+
+                        <div className="expo-form-group">
+
+                            <label>
+                                Start Date
+                            </label>
 
                             <input
                                 type="date"
@@ -278,11 +312,15 @@ const handleDelete = async (expoId) => {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
 
-                        <div >
-                            <label>End Date</label>
+                        <div className="expo-form-group">
+
+                            <label>
+                                End Date
+                            </label>
 
                             <input
                                 type="date"
@@ -291,11 +329,15 @@ const handleDelete = async (expoId) => {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
 
-                        <div >
-                            <label>Registration Deadline</label>
+                        <div className="expo-form-group">
+
+                            <label>
+                                Registration Deadline
+                            </label>
 
                             <input
                                 type="date"
@@ -304,11 +346,15 @@ const handleDelete = async (expoId) => {
                                 onChange={handleChange}
                                 required
                             />
+
                         </div>
 
 
-                        <div >
-                            <label>Status</label>
+                        <div className="expo-form-group">
+
+                            <label>
+                                Status
+                            </label>
 
                             <select
                                 name="status"
@@ -335,12 +381,22 @@ const handleDelete = async (expoId) => {
                                     Cancelled
                                 </option>
                             </select>
+
                         </div>
 
 
-<button type="submit">
-    {editingExpo ? "Update Expo" : "Create Expo"}
-</button>
+                        <div className="expo-form-group">
+
+                            <button
+                                type="submit"
+                                className="expo-submit-button"
+                            >
+                                {editingExpo
+                                    ? "Update Expo"
+                                    : "Create Expo"}
+                            </button>
+
+                        </div>
 
                     </form>
 
@@ -348,11 +404,11 @@ const handleDelete = async (expoId) => {
             )}
 
 
-            {/* Expo List Table */}
+            {/* Expo Table */}
 
-            <div >
+            <div className="expo-table-container">
 
-                <table>
+                <table className="expo-table">
 
                     <thead>
                         <tr>
@@ -398,23 +454,38 @@ const handleDelete = async (expoId) => {
                                 </td>
 
                                 <td>
-<td>
-    {expo.status}
-</td>
-    </td>
-                                <td>
-    <button
-        onClick={() => handleEdit(expo)}
-    >
-        Edit
-    </button>
+                                    <span
+                                        className={`expo-status ${expo.status}`}
+                                    >
+                                        {expo.status}
+                                    </span>
+                                </td>
 
-    <button
-        onClick={() => handleDelete(expo._id)}
-    >
-        Delete
-    </button>
-</td>
+                                <td>
+
+                                    <div className="expo-action-buttons">
+
+                                        <button
+                                            className="expo-edit-button"
+                                            onClick={() =>
+                                                handleEdit(expo)
+                                            }
+                                        >
+                                            Edit
+                                        </button>
+
+                                        <button
+                                            className="expo-delete-button"
+                                            onClick={() =>
+                                                handleDelete(expo._id)
+                                            }
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </div>
+
+                                </td>
 
                             </tr>
                         ))}
@@ -425,8 +496,10 @@ const handleDelete = async (expoId) => {
 
 
                 {expos.length === 0 && (
-                    <div className="empty-state">
-                        <p>No expos found.</p>
+                    <div className="expo-empty-state">
+                        <p>
+                            No expos found.
+                        </p>
                     </div>
                 )}
 
