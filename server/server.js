@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const expoRoutes = require("./routes/expoRoutes");
+const exhibitorRoutes = require("./routes/exhibitorRoutes");
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/expos", expoRoutes);
+app.use("/api/exhibitors", exhibitorRoutes);
 
 app.get("/", (req, res) => {
     res.json({
