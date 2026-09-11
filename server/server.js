@@ -9,6 +9,8 @@ const userRoutes = require("./routes/userRoutes");
 const expoRoutes = require("./routes/expoRoutes");
 const exhibitorRoutes = require("./routes/exhibitorRoutes");
 const boothRoutes = require("./routes/boothRoutes");
+const registrationRoutes = require("./routes/registrationRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
 
 dotenv.config();
 
@@ -26,6 +28,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/expos", expoRoutes);
 app.use("/api/exhibitors", exhibitorRoutes);
 app.use("/api/booths", boothRoutes);
+app.use("/api/registrations",registrationRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 app.get("/", (req, res) => {
     res.json({

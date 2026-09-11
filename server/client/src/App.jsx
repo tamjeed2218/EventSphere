@@ -1,7 +1,12 @@
 import Users from "./pages/admin/Users";
 import Expos from "./pages/admin/Expos";
 import Booths from "./pages/admin/Booths";
+import Registrations from "./pages/admin/Registrations";
+import MyRegistrations from "./pages/attendee/MyRegistrations";
 import AdminLayout from "./layouts/AdminLayout";
+import AttendeeFeedback from "./pages/attendee/Feedback";
+import AdminFeedback from "./pages/admin/Feedback";
+
 import {
     BrowserRouter,
     Routes,
@@ -59,23 +64,12 @@ function App() {
         </RoleRoute>
     }
 >
-    <Route
-        index
-        element={<AdminDashboard />}
-    />
-
-    <Route
-        path="users"
-        element={<Users />}
-    />
-    <Route
-        path="expos"
-        element={<Expos />}
-    />
-    <Route
-    path="booths"
-    element={<Booths />}
-/>
+    <Route index element={<AdminDashboard />} />
+    <Route path="users" element={<Users />} />
+    <Route path="expos" element={<Expos />} />
+    <Route path="booths" element={<Booths />} />
+    <Route path="registrations" element={<Registrations />} />
+    <Route path="feedback" element={<AdminFeedback />} />
 </Route>
                 {/* Organizer */}
 
@@ -99,17 +93,35 @@ function App() {
                     }
                 />
 
-                {/* Attendee */}
+ {/* Attendee Dashboard */}
 
-                <Route
-                    path="/attendee"
-                    element={
-                        <RoleRoute allowedRoles={["attendee"]}>
-                            <AttendeeDashboard />
-                        </RoleRoute>
-                    }
-                />
+<Route
+    path="/attendee"
+    element={
+        <RoleRoute allowedRoles={["attendee"]}>
+            <AttendeeDashboard />
+        </RoleRoute>
+    }
+/>
 
+{/* Attendee Registrations */}
+
+<Route
+    path="/attendee/registrations"
+    element={
+        <RoleRoute allowedRoles={["attendee"]}>
+            <MyRegistrations />
+        </RoleRoute>
+    }
+/>
+<Route
+    path="/attendee/feedback"
+    element={
+        <RoleRoute allowedRoles={["attendee"]}>
+            <AttendeeFeedback />
+        </RoleRoute>
+    }
+/>
             </Routes>
         </BrowserRouter>
     );
