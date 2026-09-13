@@ -1,11 +1,13 @@
 import Users from "./pages/admin/Users";
 import Expos from "./pages/admin/Expos";
+import Exhibitors from "./pages/admin/Exhibitors";
 import Booths from "./pages/admin/Booths";
 import Registrations from "./pages/admin/Registrations";
 import MyRegistrations from "./pages/attendee/MyRegistrations";
 import AdminLayout from "./layouts/AdminLayout";
 import AttendeeFeedback from "./pages/attendee/Feedback";
 import AdminFeedback from "./pages/admin/Feedback";
+import Analytics from "./pages/admin/Analytics";
 
 import {
     BrowserRouter,
@@ -67,9 +69,11 @@ function App() {
     <Route index element={<AdminDashboard />} />
     <Route path="users" element={<Users />} />
     <Route path="expos" element={<Expos />} />
+    <Route path="exhibitors" element={<Exhibitors />} />
     <Route path="booths" element={<Booths />} />
     <Route path="registrations" element={<Registrations />} />
     <Route path="feedback" element={<AdminFeedback />} />
+    <Route path="analytics" element={<Analytics />}/>
 </Route>
                 {/* Organizer */}
 
