@@ -12,6 +12,7 @@ const getAnalyticsOverview = async (req, res) => {
             totalExpos,
             totalBooths,
             totalRegistrations,
+            totalAttendees,
 
             usersByRole,
             exposByStatus,
@@ -19,7 +20,12 @@ const getAnalyticsOverview = async (req, res) => {
             boothsByStatus,
             registrationsByStatus,
 
-            expoRegistrations
+            expoRegistrations,
+
+            recentUsers,
+            recentExpos,
+            recentExhibitors,
+            recentRegistrations
         ] = await Promise.all([
             User.countDocuments(),
 
@@ -31,11 +37,17 @@ const getAnalyticsOverview = async (req, res) => {
 
             Registration.countDocuments(),
 
+            User.countDocuments({
+                role: "attendee"
+            }),
+
             User.aggregate([
                 {
                     $group: {
                         _id: "$role",
-                        count: { $sum: 1 }
+                        count: {
+                            $sum: 1
+                        }
                     }
                 },
                 {
@@ -49,7 +61,9 @@ const getAnalyticsOverview = async (req, res) => {
                 {
                     $group: {
                         _id: "$status",
-                        count: { $sum: 1 }
+                        count: {
+                            $sum: 1
+                        }
                     }
                 },
                 {
@@ -63,7 +77,9 @@ const getAnalyticsOverview = async (req, res) => {
                 {
                     $group: {
                         _id: "$status",
-                        count: { $sum: 1 }
+                        count: {
+                            $sum: 1
+                        }
                     }
                 },
                 {
@@ -77,7 +93,9 @@ const getAnalyticsOverview = async (req, res) => {
                 {
                     $group: {
                         _id: "$status",
-                        count: { $sum: 1 }
+                        count: {
+                            $sum: 1
+                        }
                     }
                 },
                 {
@@ -91,7 +109,9 @@ const getAnalyticsOverview = async (req, res) => {
                 {
                     $group: {
                         _id: "$status",
-                        count: { $sum: 1 }
+                        count: {
+                            $sum: 1
+                        }
                     }
                 },
                 {
@@ -136,20 +156,67 @@ const getAnalyticsOverview = async (req, res) => {
                         registrations: -1
                     }
                 }
-            ])
+            ]),
+
+            // Recent users
+            User.find()
+                .select("name email role createdAt")
+                .sort({
+                    createdAt: -1
+                })
+                .limit(5)
+                .lean(),
+
+            // Recent expos
+            Expo.find()
+                .select("title status createdAt")
+                .sort({
+                    createdAt: -1
+                })
+                .limit(5)
+                .lean(),
+
+            // Recent exhibitor profiles
+            Exhibitor.find()
+                .select("companyName status createdAt")
+                .sort({
+                    createdAt: -1
+                })
+                .limit(5)
+                .lean(),
+
+            // Recent registrations
+            Registration.find()
+                .populate(
+                    "user",
+                    "name email"
+                )
+                .populate(
+                    "expo",
+                    "title"
+                )
+                .select("user expo registrationType status createdAt")
+                .sort({
+                    createdAt: -1
+                })
+                .limit(5)
+                .lean()
         ]);
 
-        const availableBooths = await Booth.countDocuments({
-            status: "available"
-        });
+        const availableBooths =
+            await Booth.countDocuments({
+                status: "available"
+            });
 
-        const reservedBooths = await Booth.countDocuments({
-            status: "reserved"
-        });
+        const reservedBooths =
+            await Booth.countDocuments({
+                status: "reserved"
+            });
 
-        const occupiedBooths = await Booth.countDocuments({
-            status: "occupied"
-        });
+        const occupiedBooths =
+            await Booth.countDocuments({
+                status: "occupied"
+            });
 
         const approvedRegistrations =
             await Registration.countDocuments({
@@ -171,6 +238,49 @@ const getAnalyticsOverview = async (req, res) => {
                 status: "cancelled"
             });
 
+        // Convert all recent records into one activity list.
+        const recentActivities = [
+            ...recentUsers.map((user) => ({
+                type: "user",
+                title: "New user registered",
+                description: `${user.name} joined as ${user.role}`,
+                date: user.createdAt,
+                icon: "user"
+            })),
+
+            ...recentExpos.map((expo) => ({
+                type: "expo",
+                title: "Expo created",
+                description: expo.title,
+                date: expo.createdAt,
+                icon: "expo"
+            })),
+
+            ...recentExhibitors.map((exhibitor) => ({
+                type: "exhibitor",
+                title: "Exhibitor profile created",
+                description: `${exhibitor.companyName} - ${exhibitor.status}`,
+                date: exhibitor.createdAt,
+                icon: "exhibitor"
+            })),
+
+            ...recentRegistrations.map((registration) => ({
+                type: "registration",
+                title: "New registration",
+                description:
+                    `${registration.user?.name || "User"} registered for ` +
+                    `${registration.expo?.title || "an expo"}`,
+                date: registration.createdAt,
+                icon: "registration"
+            }))
+        ]
+            .sort(
+                (a, b) =>
+                    new Date(b.date) -
+                    new Date(a.date)
+            )
+            .slice(0, 8);
+
         res.status(200).json({
             success: true,
 
@@ -179,14 +289,18 @@ const getAnalyticsOverview = async (req, res) => {
                 totalExhibitors,
                 totalExpos,
                 totalBooths,
-                totalRegistrations
+                totalRegistrations,
+                totalAttendees
             },
 
             users: {
+                total: totalUsers,
+                attendees: totalAttendees,
                 byRole: usersByRole
             },
 
             expos: {
+                total: totalExpos,
                 byStatus: exposByStatus
             },
 
@@ -212,7 +326,9 @@ const getAnalyticsOverview = async (req, res) => {
                 byStatus: registrationsByStatus
             },
 
-            expoRegistrations
+            expoRegistrations,
+
+            recentActivities
         });
 
     } catch (error) {

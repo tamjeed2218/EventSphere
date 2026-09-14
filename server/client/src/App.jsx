@@ -3,11 +3,13 @@ import Expos from "./pages/admin/Expos";
 import Exhibitors from "./pages/admin/Exhibitors";
 import Booths from "./pages/admin/Booths";
 import Registrations from "./pages/admin/Registrations";
+import Sessions from "./pages/admin/Sessions";
 import MyRegistrations from "./pages/attendee/MyRegistrations";
 import AdminLayout from "./layouts/AdminLayout";
 import AttendeeFeedback from "./pages/attendee/Feedback";
 import AdminFeedback from "./pages/admin/Feedback";
 import Analytics from "./pages/admin/Analytics";
+import Notifications from "./pages/admin/Notifications";
 
 import {
     BrowserRouter,
@@ -66,14 +68,16 @@ function App() {
         </RoleRoute>
     }
 >
-    <Route index element={<AdminDashboard />} />
-    <Route path="users" element={<Users />} />
-    <Route path="expos" element={<Expos />} />
-    <Route path="exhibitors" element={<Exhibitors />} />
-    <Route path="booths" element={<Booths />} />
-    <Route path="registrations" element={<Registrations />} />
-    <Route path="feedback" element={<AdminFeedback />} />
-    <Route path="analytics" element={<Analytics />}/>
+<Route index element={<AdminDashboard />} />
+<Route path="users" element={<Users />} />
+<Route path="expos" element={<Expos />} />
+<Route path="exhibitors" element={<Exhibitors />} />
+<Route path="booths" element={<Booths />} />
+<Route path="sessions" element={<Sessions />} />
+<Route path="registrations" element={<Registrations />} />
+<Route path="feedback" element={<AdminFeedback />} />
+<Route path="analytics" element={<Analytics />} />
+<Route path="notifications" element={<Notifications />}/>
 </Route>
                 {/* Organizer */}
 

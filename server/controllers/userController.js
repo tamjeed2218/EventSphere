@@ -73,6 +73,13 @@ const updateUserRole = async (req, res) => {
             });
         }
 
+        // Prevent changing the role of an admin
+        if (user.role === "admin") {
+            return res.status(403).json({
+                message: "Admin user roles cannot be changed"
+            });
+        }
+
         user.role = role;
 
         await user.save();
@@ -108,7 +115,14 @@ const deleteUser = async (req, res) => {
             });
         }
 
-        // Prevent admin from deleting their own account
+        // Prevent deleting admin users
+        if (user.role === "admin") {
+            return res.status(403).json({
+                message: "Admin users cannot be deleted"
+            });
+        }
+
+        // Prevent deleting your own account
         if (user._id.toString() === req.user.userId.toString()) {
             return res.status(400).json({
                 message: "You cannot delete your own account"

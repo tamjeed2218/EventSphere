@@ -22,11 +22,16 @@ const userSchema = new mongoose.Schema(
             minlength: 6
         },
 
-        role: {
-            type: String,
-            enum: ["addkfjkdjkmin", "organizer", "exhibitor", "attendee"],
-            default: "attendee"
-        }
+role: {
+    type: String,
+    enum: [
+        "admin",
+        "organizer",
+        "exhibitor",
+        "attendee"
+    ],
+    default: "attendee"
+}
     },
     {
         timestamps: true
